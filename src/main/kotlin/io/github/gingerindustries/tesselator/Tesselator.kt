@@ -25,16 +25,16 @@ class Tesselator(val inputImage: BufferedImage) {
                         )
             }
 
-    private fun calculateHexagon(x: Int, y: Int) =
+    private fun calculateHexagon(x: Int, y: Int, radius: Int) =
             Polygon().also { polygon ->
                 (0..SIDES - 1)
                         .map { i ->
                             arrayOf(
-                                            (x * RADIUS * Math.sqrt(0.75) * 2) +
-                                                    (RADIUS * Math.sqrt(0.75) * (y % 2)) +
-                                                    RADIUS * Math.sin((2 * Math.PI * i / SIDES)),
-                                            (y * RADIUS * 1.5) +
-                                                    RADIUS * Math.cos((2 * Math.PI * i / SIDES))
+                                            (x * radius * Math.sqrt(0.75) * 2) +
+                                                    (radius * Math.sqrt(0.75) * (y % 2)) +
+                                                    radius * Math.sin((2 * Math.PI * i / SIDES)),
+                                            (y * radius * 1.5) +
+                                                    radius * Math.cos((2 * Math.PI * i / SIDES))
                                     )
                                     .map(Math::round)
                                     .map(Long::toInt)
@@ -42,11 +42,11 @@ class Tesselator(val inputImage: BufferedImage) {
                         .forEach { polygon.addPoint(it[0], it[1]) }
             }
 
-    fun draw(width: Int): BufferedImage {
+    fun draw(width: Int, radius: Int): BufferedImage {
         val outputImage =
                 BufferedImage(
-                        (RADIUS * Math.sqrt(0.75) * 2 * (width - 0.5)).toInt(),
-                        ((RADIUS * 1.5 * heightForWidth(width)) - (RADIUS * 1.5)).toInt(),
+                        (radius * Math.sqrt(0.75) * 2 * (width - 0.5)).toInt(),
+                        ((radius * 1.5 * heightForWidth(width)) - (radius * 1.5)).toInt(),
                         BufferedImage.TYPE_3BYTE_BGR
                 )
         val graphics = outputImage.createGraphics()
@@ -59,7 +59,7 @@ class Tesselator(val inputImage: BufferedImage) {
                         .forEachIndexed { y, d ->
                             d.map(::Color).forEachIndexed { x, pixel ->
                                 color = pixel
-                                fillPolygon(calculateHexagon(x, y))
+                                fillPolygon(calculateHexagon(x, y, radius))
                             }
                         }
             }
@@ -69,7 +69,6 @@ class Tesselator(val inputImage: BufferedImage) {
     }
 
     companion object {
-        const val RADIUS = 100
         const val SIDES = 6
     }
 }

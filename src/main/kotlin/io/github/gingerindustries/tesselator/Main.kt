@@ -15,12 +15,13 @@ class TesselatorCLI :
     val input by argument().file(mustExist = true, canBeDir = false, mustBeReadable = true)
     val output by argument().file(mustExist = false, canBeDir = false, mustBeWritable = false)
     val width by
-            option("-w", "--width", help = "The width of the image in hexagons").int().default(50)
+            option("-w", "--width", help = "The width of the image in hexagons").int().default(30)
+    val radius by option("-r", "--radius", help = "The radius of the hexagons").int().default(16)
 
     override fun run() {
         echo("Tesselating ${input.path}...")
         Imaging.writeImage(
-                Tesselator(Imaging.getBufferedImage(input)).draw(width),
+                Tesselator(Imaging.getBufferedImage(input)).draw(width, radius),
                 output,
                 ImageFormats.PNG
         )
